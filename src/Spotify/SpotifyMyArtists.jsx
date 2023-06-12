@@ -1,13 +1,17 @@
 import * as React from 'react';
 import * as RB from 'react-bootstrap';
 import fetchItems from './SpotifyAPI';
-import { ARTIST_ENDPOINT } from './SpotifyAPI';
+import { TOP_ARTIST_ENDPOINT } from './SpotifyAPI';
 
 const SpotifyMyArtists = () => {
   const [artists, setArtists] = React.useState([]);
 
   React.useEffect(() => {
-      fetchItems(ARTIST_ENDPOINT, setArtists);
+    Promise.all([
+      fetchItems(TOP_ARTIST_ENDPOINT),
+    ]).then((results) => {
+      setArtists(results[0]);
+    });
   }, []);
 
   return (
@@ -33,13 +37,17 @@ const SpotifyArtistDetails = ({ artist, fetchItems }) => {
   const [albums, setAlbums] = React.useState([]);
 
   React.useEffect(() => {
-    fetchItems(`${artist.href}/albums?limit=3`, setAlbums);
+    Promise.all([
+      fetchItems(`${artist.href}/albums?limit=3`),
+    ]).then((results) => {
+      setAlbums(results[0]);
+    });
   }, []);
 
   return (
     <tr>
       <th scope="row">{artist.name}</th>
-      <td><RB.Image src={artist.images[0].url} alt={artist.name} height="150" rounded /></td>
+      <td><RB.Image src={artist.images[0].url} alt={artist.name} width="150" rounded /></td>
       <td>
         <RB.ListGroup>
           {albums.map((album) => <RB.ListGroup.Item key={album.id}>{album.name}</RB.ListGroup.Item>)}

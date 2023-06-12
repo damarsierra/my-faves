@@ -6,7 +6,7 @@ const client_secret = import.meta.env.VITE_APP_SPOTIFY_CLIENT_SECRET
 const refresh_token = import.meta.env.VITE_APP_SPOTIFY_REFRESH_TOKEN
 
 const TOKEN_ENDPOINT = `https://accounts.spotify.com/api/token`;
-export const ARTIST_ENDPOINT = `https://api.spotify.com/v1/me/top/artists`;
+export const TOP_ARTIST_ENDPOINT = `https://api.spotify.com/v1/me/top/artists`;
 
 const getAccessToken = async () => {
   const basic = Buffer.from(`${client_id}:${client_secret}`).toString("base64");
@@ -24,12 +24,12 @@ const getAccessToken = async () => {
   return response.json();
 }
 
-export default async function fetchItems (endpoint, setState) {
+export default async function fetchItems (endpoint) {
   const { access_token } = await getAccessToken();
   const { data } = await axios.get(endpoint, {
     headers: {
       Authorization: `Bearer ${access_token}`,
     }
   });
-  setState(data.items);
+  return data.items;
 }
